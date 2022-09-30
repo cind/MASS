@@ -1,6 +1,7 @@
 #!/bin/bash
 
 . @BASH_LIBRARY_DIR@/mass-functions.sh || { echo "Failed to source MASS functions!" 1>&2; exit 1; }
+export FSLVERSION=6.0.0
 
 ################################################ VERSION INFO ################################################
 # $Id: ChooseTemplates.sh 170 2013-09-20 14:44:15Z hsiehm@UPHS.PENNHEALTH.PRV $
@@ -31,7 +32,7 @@ This script does the following:
 
 	This script accepts a list of images as input and uses k-means clustering approach
 	to find the centroids of different clusters and returns those images as an output.
-	
+
 	This script can be used to select images from your dataset that represents the
 	variance in your dataset and therefore, could be used as Templates in performing
 	the skull-stripping operation.
@@ -40,18 +41,18 @@ This script does the following:
 USAGE :	$0 [OPTIONS]
 OPTIONS:
 
-Reqd:	-list	  < file >	absolute path to the file list containing all of 
+Reqd:	-list	  < file >	absolute path to the file list containing all of
 				the input files (with full path) to be clustered
-	 
+
 Opt:	-clust	  < int  >	Number of templates to be chosen (default: 6)
-	-dest	  < path >	absolute path to the destination where the results are to be stored 
+	-dest	  < path >	absolute path to the destination where the results are to be stored
 				(default: same as input)
 	-pref	  < prefix >	prefix for the output list containing the chosen templates
 				(default: ChosenTemplates_"date +%F-%H%M%S".txt)
 	-tmp	  < path >	absolute path to the temporary directory
 	-v			verbose output (default: no output)
 	-a	  		flag indicating the the input files are affinely registered
-	-MT	  < int  >	an integer value indicating the number of threads to use for 
+	-MT	  < int  >	an integer value indicating the number of threads to use for
 				parallel processing (default: 1)
 	-V			Version information
 	-h         		this help page
@@ -63,19 +64,19 @@ Examples:
 
 	mass-chooseTemplates -list /path/to/list/of/images.lst -clust 15
 		To select 15 cluster-centers from the provided input list
-  
+
 	mass-chooseTemplates -list /path/to/list/of/images.lst -clust 15 -MT 6
 		To select 15 cluster-centers from the provided input list and use 6 CPU cores to speed
 		up the processing
-  
+
   	mass-chooseTemplates -list /path/to/list/of/images.lst -clust 15 -a
   		If you have already affinely registered all input images so they are in the same space,
-  		you can specify that by using the -a option. Here, you do not need the -MT option 
+  		you can specify that by using the -a option. Here, you do not need the -MT option
   		as all images have already been registered
 
-	Additionally, you can also submit this script to your computing cluster (using appropriate options) 
+	Additionally, you can also submit this script to your computing cluster (using appropriate options)
 	if you have a large number of images that need be clustered.
-	
+
 ERROR: Not enough arguments!!
 ##############################################
 
@@ -89,7 +90,7 @@ exit 1
 cleanUpandExit()
 {
 	echo -e ":o:o:o:o:o Aborting Operations .... \n\n"
-	
+
 	if [ -d $TMP ]
 	then
 		BGjobs=`jobs -p`
@@ -103,9 +104,9 @@ cleanUpandExit()
 		rmdir -pv $TMP
 		rmdir -pv $TMPDIR
 	fi
-	
+
 	executionTime
-	
+
 	exit 1
 }
 
@@ -113,40 +114,40 @@ parse()
 {
 	while [ -n "$1" ]; do
 		case $1 in
-			-h) 
+			-h)
 				help;
 				shift 1;;			# help is called
-		     	-list) 
+		     	-list)
 				list=$2;
 				shift 2;;			# SubID is set
-			-dest) 
+			-dest)
 				dest=`checkPath $2`;
 				shift 2;;			# source path is set
-			-tmp) 
+			-tmp)
 				tmpDirToUse=`checkPath $2`;
 				shift 2;;			# source path is set
-			-clust) 
+			-clust)
 				clust=$2;
 				shift 2;;			# source path is set
-			-pref) 
+			-pref)
 				pref=$2;
 				shift 2;;			# source path is set
-			-v) 
+			-v)
 				verbose=1;
 				shift 1;;			# source path is set
-			-a) 
+			-a)
 				affine=1;
 				shift 1;;			# source path is set
-			-V) 
+			-V)
 				version;
 				shift 1;;			# source path is set
-			-MT) 
+			-MT)
 				MT=$2;
 				shift 2;;			# source path is set
-			-*) 
+			-*)
 				echo "ERROR: no such option $1";
 				help;;
-			 *) 
+			 *)
 				break;;
 		esac
 	done
@@ -157,7 +158,7 @@ import()
 	ext=$1
 	inFile=$2
 	outFile=$3
-	
+
 	if [ "${ext}" == "nii.gz" ] || [ "${ext}" == "nii" ] || [ "${ext}" == "hdr" ]
 	then
 		3dcalc \
@@ -184,7 +185,7 @@ resample()
 	ext=$1
 	inFile=$2
 	outFile=$3
-	
+
 	if [ "${ext}" == "nii.gz" ] || [ "${ext}" == "nii" ] || [ "${ext}" == "hdr" ]
 	then
 		3dresample \
@@ -231,9 +232,9 @@ pref=ChosenTemplates_`date +%F-%H%M%S`.txt
 FSLOUTPUTTYPE=NIFTI; export $FSLOUTPUTTYPE
 
 ### Specifying the trap signal
-trap "checkExitCode 1 '\nProgram Interrupted. Received SIGHUP signal'" SIGHUP 
-trap "checkExitCode 1 '\nProgram Interrupted. Received SIGINT signal'" SIGINT 
-trap "checkExitCode 1 '\nProgram Interrupted. Received SIGTERM signal'" SIGTERM 
+trap "checkExitCode 1 '\nProgram Interrupted. Received SIGHUP signal'" SIGHUP
+trap "checkExitCode 1 '\nProgram Interrupted. Received SIGINT signal'" SIGINT
+trap "checkExitCode 1 '\nProgram Interrupted. Received SIGTERM signal'" SIGTERM
 trap "checkExitCode 1 '\nProgram Interrupted. Received SIGKILL signal'" SIGKILL
 
 ### Check if all dependenices are satisfied
@@ -285,13 +286,13 @@ while read line
 do
 	# Check if the file exists
 	checkFile $line
-	
+
 	# Get attributes
-	temp=`FileAtt $line`				
+	temp=`FileAtt $line`
 	FileExt=`echo $temp | awk '{ print $1 }'`
 	FilebName=`echo $temp | awk '{ print $2 }'`
 	FileDir=`echo $temp | awk '{ print $3 }'`
-	
+
 	line=${FileDir}/${FilebName}.${FileExt}
 
 	if [ $MT == "1" ]
@@ -308,13 +309,13 @@ do
 			sleep 1s
 			BGjobsNum=`jobs -p | wc -l`
 		done
-		
+
 		i=`echo "scale=0; $i + 1" | bc`
 		echoV "\t-->	Resampling $i/$FileCount images ..."
 
 		resample ${FileExt} ${line} ${TMP}${FilebName}_res222 &
 	fi
-	
+
 done < $list
 
 BGjobs=`jobs -p`
@@ -322,7 +323,7 @@ wait $BGjobs
 
 while read line
 do
-	temp=`FileAtt $line`				
+	temp=`FileAtt $line`
 	FileExt=`echo $temp | awk '{ print $1 }'`
 	FilebName=`echo $temp | awk '{ print $2 }'`
 
@@ -346,14 +347,14 @@ then
 	echoV "\n----->	Importing the input files and affinely (12 dof) registering to the first image in the list ...\n"
 
 	RefFile=`cat ${TMP}TempResampledList.txt | head -1`
-	
+
 	while read line
 	do
-		temp=`FileAtt $line`				
+		temp=`FileAtt $line`
 		FileExt=`echo $temp | awk '{ print $1 }'`
 		FilebName=`echo $temp | awk '{ print $2 }'`
 
-		
+
 		if [ $MT == "1" ]
 		then
 			i=`echo "scale=0; $i + 1" | bc`
@@ -386,15 +387,15 @@ then
 			 -datatype int \
 			 -v >> ${TMP}AffineRegistration_${PID}.log 2>&1 &
 		fi
-			
+
 	done < ${TMP}TempResampledList.txt
-	
+
 	BGjobs=`jobs -p`
 	wait $BGjobs
 
 	while read line
 	do
-		temp=`FileAtt $line`				
+		temp=`FileAtt $line`
 		FileExt=`echo $temp | awk '{ print $1 }'`
 		FilebName=`echo $temp | awk '{ print $2 }'`
 
@@ -410,7 +411,7 @@ else
 	echoV "\n----->	Importing the input files and converting them to byte ...\n"
 	while read line
 	do
-		temp=`FileAtt $line`				
+		temp=`FileAtt $line`
 		FileExt=`echo $temp | awk '{ print $1 }'`
 		FilebName=`echo $temp | awk '{ print $2 }'`
 
@@ -434,15 +435,15 @@ else
 
 			import ${FileExt} ${line} ${TMP}${FilebName}_adj &
 		fi
-		
+
 	done < ${TMP}TempResampledList.txt
-	
+
 	BGjobs=`jobs -p`
 	wait $BGjobs
 
 	while read line
 	do
-		temp=`FileAtt $line`				
+		temp=`FileAtt $line`
 		FileExt=`echo $temp | awk '{ print $1 }'`
 		FilebName=`echo $temp | awk '{ print $2 }'`
 
@@ -520,7 +521,7 @@ done
 rmdir -pv ${TMP}
 rmdir -pv $TMPDIR
 
-### Execution Time 
+### Execution Time
 executionTime
 
 ################################################ END ################################################

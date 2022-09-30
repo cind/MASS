@@ -1,6 +1,7 @@
 #!/bin/bash
 
 . @BASH_LIBRARY_DIR@/mass-functions.sh || { echo "Failed to source MASS functions!" 1>&2; exit 1; }
+export FSLVERSION=6.0.0
 
 ################################################ VERSION INFO ################################################
 # $Id: ThresholdJacobian.sh 170 2013-09-20 14:44:15Z hsiehm@UPHS.PENNHEALTH.PRV $
@@ -29,7 +30,7 @@ cat <<HELP
 
 This script does the following:
 
-	This script can be used to threshold a Jacobian Rank Mask generated from the MASS algorithm in 
+	This script can be used to threshold a Jacobian Rank Mask generated from the MASS algorithm in
 	order to create a binary brain mask using the threshold specified by the user.
 
 DEPENDENCIES:
@@ -45,12 +46,12 @@ OPTIONS:
 Reqd:	-in	   < file >	absolute path of the input file to be skull-stripped and cerebellum removed
 	-jacRank   < file >	absolute path of the Jacobian Ranked mask
 
-Opt:	-dest	   < path >	absolute path to the destination where the results are to be stored 
+Opt:	-dest	   < path >	absolute path to the destination where the results are to be stored
 				(default: same as input)
 	-tmp	   < path >	absolute path to the temporary directory
-	-perThresh < float >	Percent Threshold for the aggresiveness of the skull-stripping and cerebellum removal. 
+	-perThresh < float >	Percent Threshold for the aggresiveness of the skull-stripping and cerebellum removal.
 				0 < \$perThresh < 100 (default: 50)
-	-absThresh < float >	Absolute Threshold for the aggresiveness of the skull-stripping and cerebellum removal. 
+	-absThresh < float >	Absolute Threshold for the aggresiveness of the skull-stripping and cerebellum removal.
 				0 < \$absThresh < max (no default)
 				If this argument is provided, it will override the -perThresh value.
 	-mask      < pattern >	Prefix of the output brain mask (default: input_mask)
@@ -78,7 +79,7 @@ exit 1
 cleanUpandExit()
 {
 	echo -e ":o:o:o:o:o Aborting Operations .... \n\n"
-	
+
 	if [ -d "$TMP" ]
 	then
 		if [ "$TMP" != "$dest" ]
@@ -94,9 +95,9 @@ cleanUpandExit()
 			rmV ${JRbName}.nii.gz
 		fi
 	fi
-	
+
 	executionTime
-	
+
 	exit 1
 }
 
@@ -104,64 +105,64 @@ parse()
 {
 	while [ -n "$1" ]; do
 		case $1 in
-			-h) 
+			-h)
 				help;
 				shift 1;;			# help is called
-		     	-in) 
+		     	-in)
 				input=$2;
-				
+
 				checkFile $input
-				temp=`FileAtt $input`				
+				temp=`FileAtt $input`
 				InExt=`echo $temp | awk '{ print $1 }'`
 				InbName=`echo $temp | awk '{ print $2 }'`
 				InDir=`echo $temp | awk '{ print $3 }'`
-				
+
 				input=${InDir}/${InbName}.${InExt}
 
 				shift 2;;			# SubID is set
-			-dest) 
+			-dest)
 				dest=`checkPath $2`;
 				shift 2;;			# source path is set
-			-tmp) 
+			-tmp)
 				tmpDirToUse=`checkPath $2`;
 				shift 2;;			# source path is set
-			-perThresh) 
+			-perThresh)
 				perThresh=$2;
 				shift 2;;			# source path is set
-			-absThresh) 
+			-absThresh)
 				absThresh=$2;
 				shift 2;;			# source path is set
-			-kernel) 
+			-kernel)
 				kernel=$2;
 				shift 2;;			# source path is set
-			-mask) 
+			-mask)
 				mask=$2;
 				shift 2;;			# source path is set
-			-cbq) 
+			-cbq)
 				cbq=$2;
 				shift 2;;			# source path is set
-			-jacRank) 
+			-jacRank)
 				jacRank=$2;
-				
+
 				checkFile $jacRank
-				temp=`FileAtt $jacRank`				
+				temp=`FileAtt $jacRank`
 				JRExt=`echo $temp | awk '{ print $1 }'`
 				JRbName=`echo $temp | awk '{ print $2 }'`
 				JRDir=`echo $temp | awk '{ print $3 }'`
-				
+
 				jacRank=${JRDir}/${JRbName}.${JRExt}
 
 				shift 2;;			# source path is set
-			-v) 
+			-v)
 				verbose=1;
 				shift 1;;			# source path is set
-			-V) 
+			-V)
 				version;
 				shift 1;;			# source path is set
-			-*) 
+			-*)
 				echo "ERROR: no such option $1";
 				help;;
-			 *) 
+			 *)
 				break;;
 		esac
 	done
@@ -172,7 +173,7 @@ import()
 	ext=$1
 	inFile=$2
 	outFile=$3
-	
+
 	if [ ! -f ${outFile}.nii.gz ]
 	then
 		if [ "${ext}" == "nii.gz" ] || [ "${ext}" == "nii" ] || [ "${ext}" == "img" ]
@@ -183,7 +184,7 @@ import()
 		then
 			echoV "nifti1_test -zn1 ${inFile%.hdr}.img ${outFile}" 1>&2
 			nifti1_test -zn1 ${inFile%.hdr}.img ${outFile}
-		fi	
+		fi
 	fi
 }
 
@@ -212,9 +213,9 @@ scripts=@LIBEXEC_DIR@/
 FSLOUTPUTTYPE=NIFTI_GZ; export $FSLOUTPUTTYPE
 
 ### Specifying the trap signal
-trap "checkExitCode 1 '\nProgram Interrupted. Received SIGHUP signal'" SIGHUP 
-trap "checkExitCode 1 '\nProgram Interrupted. Received SIGINT signal'" SIGINT 
-trap "checkExitCode 1 '\nProgram Interrupted. Received SIGTERM signal'" SIGTERM 
+trap "checkExitCode 1 '\nProgram Interrupted. Received SIGHUP signal'" SIGHUP
+trap "checkExitCode 1 '\nProgram Interrupted. Received SIGINT signal'" SIGINT
+trap "checkExitCode 1 '\nProgram Interrupted. Received SIGTERM signal'" SIGTERM
 trap "checkExitCode 1 '\nProgram Interrupted. Received SIGKILL signal'" SIGKILL
 
 ### Reading the arguments
@@ -270,7 +271,7 @@ then
 	fi
 
 	echo -e "\nPARAMETERS"
-	
+
 	if [ -n "$absThresh" ]
 	then
 		echo -e "\tAbsolute Threshold	: $absThresh"
@@ -373,7 +374,7 @@ echoV "\n--> ${fillholes} \n
 	 -in ${Sum_open} \n
 	 -dest $TMP \n
 	 -v;"
-	
+
 if [ "$verbose" == "1" ]
 then
 	${fillholes} \
@@ -526,7 +527,7 @@ else
 	rmV ${JRbName}.nii.gz
 fi
 
-### Execution Time 
+### Execution Time
 executionTime
 
 ################################################ END ################################################
