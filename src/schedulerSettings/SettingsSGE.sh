@@ -16,7 +16,7 @@ setSubmitCMD()
 	_OptJoin="-j y"							# String for joining the output files
 	_OptOutput="-o ${log}\$JOB_NAME-\$JOB_ID.log"			# String for specifying output filename
 	_OptHoldID="-hold_jid"						# String for requesting a job dependency
-    _Queue="-q low.q"
+    _Queue="-q ma.sub.q"
 
 
 	# Setting up the basic command and then the other options will be added onto it
