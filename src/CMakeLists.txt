@@ -38,57 +38,60 @@
 # source code written in other programming languages such as Java, Python, Perl,
 # MATLAB, and Bash.
 
+cmake_minimum_required( VERSION 2.8.4 )
+project( MASS )
+include(${CMAKE_SOURCE_DIR}/CMakeLists.txt)
 
 #basis_add_executable (mass.sh NO_BASIS_UTILITIES)
 configure_file( mass.sh.in ${CMAKE_BINARY_DIR}/src/mass.sh.in @ONLY )
-install( FILES ${CMAKE_BINARY_DIR}/src/mass.sh.in 
-	PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ 
-	DESTINATION bin 
+install( FILES ${CMAKE_BINARY_DIR}/src/mass.sh.in
+	PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
+	DESTINATION bin
 	RENAME mass )
 
 #basis_add_executable (mass-chooseTemplates.sh NO_BASIS_UTILITIES)
 configure_file( mass-chooseTemplates.sh.in ${CMAKE_BINARY_DIR}/src/mass-chooseTemplates.sh.in @ONLY )
-install( FILES ${CMAKE_BINARY_DIR}/src/mass-chooseTemplates.sh.in 
-	PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ 
-	DESTINATION bin 
+install( FILES ${CMAKE_BINARY_DIR}/src/mass-chooseTemplates.sh.in
+	PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
+	DESTINATION bin
 	RENAME mass-chooseTemplates )
 
 #basis_add_executable (mass-thresholdJacobian.sh NO_BASIS_UTILITIES)
 configure_file( mass-thresholdJacobian.sh.in ${CMAKE_BINARY_DIR}/src/mass-thresholdJacobian.sh.in @ONLY )
-install( FILES ${CMAKE_BINARY_DIR}/src/mass-thresholdJacobian.sh.in 
-	PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ 
-	DESTINATION bin 
+install( FILES ${CMAKE_BINARY_DIR}/src/mass-thresholdJacobian.sh.in
+	PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
+	DESTINATION bin
 	RENAME mass-thresholdJacobian )
 
 #basis_add_executable (mass-fillHoles.sh LIBEXEC NO_BASIS_UTILITIES)
 configure_file( mass-fillHoles.sh.in ${CMAKE_BINARY_DIR}/src/mass-fillHoles.sh.in @ONLY )
-install( FILES ${CMAKE_BINARY_DIR}/src/mass-fillHoles.sh.in 
-	PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ 
-	DESTINATION lib 
+install( FILES ${CMAKE_BINARY_DIR}/src/mass-fillHoles.sh.in
+	PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
+	DESTINATION lib
 	RENAME mass-fillHoles )
 #basis_add_executable (mass-morpho.sh LIBEXEC NO_BASIS_UTILITIES)
 configure_file( mass-morpho.sh.in ${CMAKE_BINARY_DIR}/src/mass-morpho.sh.in @ONLY )
-install( FILES ${CMAKE_BINARY_DIR}/src/mass-morpho.sh.in 
-	PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ 
-	DESTINATION lib 
+install( FILES ${CMAKE_BINARY_DIR}/src/mass-morpho.sh.in
+	PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
+	DESTINATION lib
 	RENAME mass-morpho )
 #basis_add_executable (mass-registrations.sh LIBEXEC NO_BASIS_UTILITIES)
 configure_file( mass-registrations.sh.in ${CMAKE_BINARY_DIR}/src/mass-registrations.sh.in @ONLY )
-install( FILES ${CMAKE_BINARY_DIR}/src/mass-registrations.sh.in 
-	PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ 
-	DESTINATION lib 
+install( FILES ${CMAKE_BINARY_DIR}/src/mass-registrations.sh.in
+	PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
+	DESTINATION lib
 	RENAME mass-registrations )
 #basis_add_executable (mass-skullstripping.sh LIBEXEC NO_BASIS_UTILITIES)
 configure_file( mass-skullstripping.sh.in ${CMAKE_BINARY_DIR}/src/mass-skullstripping.sh.in @ONLY )
-install( FILES ${CMAKE_BINARY_DIR}/src/mass-skullstripping.sh.in 
-	PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ 
-	DESTINATION lib 
+install( FILES ${CMAKE_BINARY_DIR}/src/mass-skullstripping.sh.in
+	PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
+	DESTINATION lib
 	RENAME mass-skullstripping )
 #basis_add_executable (mass-choosetemplate.py LIBEXEC NO_BASIS_UTILITIES)
 configure_file( mass-choosetemplate.py.in ${CMAKE_BINARY_DIR}/src/mass-choosetemplate.py.in @ONLY )
-install( FILES ${CMAKE_BINARY_DIR}/src/mass-choosetemplate.py.in 
-	PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ 
-	DESTINATION lib 
+install( FILES ${CMAKE_BINARY_DIR}/src/mass-choosetemplate.py.in
+	PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
+	DESTINATION lib
 	RENAME mass-choosetemplate )
 
 #basis_add_library (massUtilities mass-functions.sh)
@@ -97,9 +100,9 @@ install( FILES ${CMAKE_BINARY_DIR}/src/mass-choosetemplate.py.in
 #install( TARGETS massUtilities
 #    	PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
 #    	DESTINATION lib )
-install( FILES mass-functions.sh.in 
-	PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ 
-	DESTINATION ${BASH_LIBRARY_DIR} 
+install( FILES mass-functions.sh.in
+	PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
+	DESTINATION ${BASH_LIBRARY_DIR}
 	RENAME mass-functions.sh )
 
 
