@@ -38,10 +38,6 @@
 # source code written in other programming languages such as Java, Python, Perl,
 # MATLAB, and Bash.
 
-cmake_minimum_required( VERSION 2.8.4 )
-project( MASS )
-include(${CMAKE_SOURCE_DIR}/CMakeLists.txt)
-
 #basis_add_executable (mass.sh NO_BASIS_UTILITIES)
 configure_file( mass.sh.in ${CMAKE_BINARY_DIR}/src/mass.sh.in @ONLY )
 install( FILES ${CMAKE_BINARY_DIR}/src/mass.sh.in
