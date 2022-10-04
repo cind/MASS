@@ -20,7 +20,7 @@ setSubmitCMD()
 
 
 	# Setting up the basic command and then the other options will be added onto it
-	submitCMD="${_OptExec} ${_OptTerse} ${_OptJoin} ${_OptOutput} ${_OptMemory}"
+	submitCMD="${_OptExec} ${_OptTerse} ${_OptJoin} ${_OptOutput} ${_OptMemory} ${_Queue}"
 
 
 	# check if priority variable
