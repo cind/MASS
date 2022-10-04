@@ -72,6 +72,8 @@ to your queuing system. You can refer to the corresponding files for SGE and PBS
 This repository requries that you have `git lfs` installed and initiated in order to
 get the Template NiFTI files.
 
+https://github.com/git-lfs/git-lfs/releases/tag/v3.2.0
+
 **Install `git lfs` and run `git lfs install` BEFORE cloning.**
 
 
