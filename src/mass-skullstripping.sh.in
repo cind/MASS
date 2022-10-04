@@ -1,5 +1,5 @@
 #!/bin/bash
-export FSLVERSION=6.0.
+export FSLVERSION=6.0.0
 
 . @BASH_LIBRARY_DIR@/mass-functions.sh || { echo "Failed to source MASS functions!" 1>&2; exit 1; }
 
