@@ -1,4 +1,5 @@
 #!/bin/bash
+export FSLVERSION=6.0.0
 
 . @BASH_LIBRARY_DIR@/mass-functions.sh || { echo "Failed to source MASS functions!" 1>&2; exit 1; }
 
@@ -36,17 +37,17 @@ USAGE :	$0 [OPTIONS]
 OPTIONS:
 
 Required:	-in	   < path >	absolute path of the input file to be dilated
- 
-Operation:	-dilate			Perform a dilation operation using a Gaussian sphere 
+
+Operation:	-dilate			Perform a dilation operation using a Gaussian sphere
 					(output prefix: input_dil\${kernel}mm)
-		-erode			Perform an erosion operation using a Gaussian sphere 
+		-erode			Perform an erosion operation using a Gaussian sphere
 					(output prefix: input_ero\${kernel}mm)
-		-open			Perform an opening operation using a Gaussian sphere 
+		-open			Perform an opening operation using a Gaussian sphere
 					(output prefix: input_open\${kernel}mm)
-		-close			Perform a closing operation using a Gaussian sphere 
+		-close			Perform a closing operation using a Gaussian sphere
 					(output prefix: input_close\${kernel}mm)
-	
-Optional:	-dest	   < path >	absolute path to the destination where the results are to be stored 
+
+Optional:	-dest	   < path >	absolute path to the destination where the results are to be stored
 					(default: same as input)
 		-tmp	   < path >	absolute path to the temporary directory
 		-kernel	   < int >	Gaussian kernel sphere radius in mm (default: 2)
@@ -62,7 +63,7 @@ DEPENDENCIES:
 	3dBrickStat	: `which 3dBrickStat`
 	nifti1_test	: `which nifti1_test`
 	3dLocalstat	: `which 3dLocalstat`
-	
+
 HELP
 exit 1
 }
@@ -70,12 +71,12 @@ exit 1
 cleanUpandExit()
 {
 	echo -e ":o:o:o:o:o Aborting Operations .... \n\n"
-	
+
 	if [ -d "$TMP" ]
 	then
 		rm -rfv ${TMP}*
 	fi
-	
+
 	exit 1
 }
 
@@ -83,53 +84,53 @@ parse()
 {
 	while [ -n "$1" ]; do
 		case $1 in
-			-h) 
+			-h)
 				help;
 				shift 1;;			# help is called
-		     	-in) 
+		     	-in)
 				input=$2;
-				
+
 				checkFile $input
 
-				temp=`FileAtt $input`				
+				temp=`FileAtt $input`
 				InExt=`echo $temp | awk '{ print $1 }'`
 				InbName=`echo $temp | awk '{ print $2 }'`
 				InDir=`echo $temp | awk '{ print $3 }'`
-				
+
 				input=${InDir}/${InbName}.${InExt}
 
 				shift 2;;			# SubID is set
-			-dest) 
+			-dest)
 				dest=`checkPath $2`;
 				shift 2;;			# source path is set
-			-tmp) 
+			-tmp)
 				tmpDirToUse=`checkPath $2`;
 				shift 2;;			# source path is set
-			-kernel) 
+			-kernel)
 				kernel=$2;
 				shift 2;;			# source path is set
-			-dilate) 
+			-dilate)
 				dil=1;
 				shift 1;;			# source path is set
-			-erode) 
+			-erode)
 				ero=1;
 				shift 1;;			# source path is set
-			-open) 
+			-open)
 				open=1;
 				shift 1;;			# source path is set
-			-close) 
+			-close)
 				close=1;
 				shift 1;;			# source path is set
-			-v) 
+			-v)
 				verbose=1;
 				shift 1;;			# source path is set
-			-V) 
+			-V)
 				version;
 				shift 1;;			# source path is set
-			-*) 
+			-*)
 				echo "ERROR: no such option $1";
 				help;;
-			 *) 
+			 *)
 				break;;
 		esac
 	done
@@ -140,7 +141,7 @@ import()
 	ext=$1
 	inFile=$2
 	outFile=$3
-	
+
 	if [ "${ext}" == "nii.gz" ]
 	then
 		if [ "$verbose" == "1" ]
@@ -148,7 +149,7 @@ import()
 			cp -v ${inFile} ${outFile}.nii.gz
 		else
 			cp ${inFile} ${outFile}.nii.gz
-		fi			
+		fi
 	elif [ "${ext}" == "nii" ]
 	then
 		echoV "nifti1_test -zn1 ${inFile} ${outFile}"
@@ -161,15 +162,15 @@ import()
 	then
 		echoV "nifti1_test -zn1 ${inFile} ${outFile}"
 		nifti1_test -zn1 ${inFile} ${outFile}
-	fi	
+	fi
 }
 
 dilate()
 {
 	in=$1
 	out=$2
-	
-	
+
+
 	### Dilating the mask
 	echoV "\n----->	Dilating the mask ...\n"
 	echoV "3dLocalstat \n
@@ -177,9 +178,9 @@ dilate()
 	 -stat 'sum' \n
 	 -prefix dilate.nii.gz \n
 	 ${in};"
-	
+
 	if [ "$verbose" == "1" ]
-	then 
+	then
 		3dLocalstat \
 		 -nbhd "SPHERE($kernel)" \
 		 -stat 'sum' \
@@ -190,7 +191,7 @@ dilate()
 		 -nbhd "SPHERE($kernel)" \
 		 -stat 'sum' \
 		 -prefix dilate.nii.gz \
-		 ${in} >> DilateErode.log 2>&1	
+		 ${in} >> DilateErode.log 2>&1
 	fi
 
 	echoV "\n3dcalc \n
@@ -200,7 +201,7 @@ dilate()
 	 -verbose;"
 
 	if [ "$verbose" == "1" ]
-	then 
+	then
 		3dcalc \
 		 -a dilate.nii.gz \
 		 -expr "step(a)" \
@@ -229,7 +230,7 @@ erode()
 {
 	in=$1
 	out=$2
-	
+
 	### Eroding the thresholded mask
 	echoV "\n----->	Eroding the thresholded mask ...\n"
 	echoV "3dLocalstat \n
@@ -237,9 +238,9 @@ erode()
 	 -stat 'sum' \n
 	 -prefix erode.nii.gz \n
 	 ${in};"
-	 
+
 	if [ "$verbose" == "1" ]
-	then 
+	then
 		3dLocalstat \
 		 -nbhd "SPHERE($kernel)" \
 		 -stat 'sum' \
@@ -252,7 +253,7 @@ erode()
 		 -prefix erode.nii.gz \
 		 ${in} >> DilateErode.log 2>&1
 	fi
-	
+
 	max=$(( `3dBrickStat -slow -max erode.nii.gz` - 1 ))
 
 	echoV "\n3dcalc \n
@@ -260,9 +261,9 @@ erode()
 	 -expr 'step(a-$max)' \n
 	 -prefix ${out} \n
 	 -verbose;"
-	 
+
 	if [ "$verbose" == "1" ]
-	then 
+	then
 		3dcalc \
 		 -a erode.nii.gz \
 		 -expr "step(a-$max)" \
@@ -274,7 +275,7 @@ erode()
 		 -expr "step(a-$max)" \
 		 -prefix ${out} \
 		 -verbose >> DilateErode.log 2>&1
-	fi	 
+	fi
 	checkExitCode $? "\nERROR: Erosion of the input image failed!!!"
 
 	if [ "$verbose" == "1" ]
@@ -298,9 +299,9 @@ startTime=`date +%F-%H:%M:%S`
 startTimeStamp=`date +%s`
 
 ### Specifying the trap signal
-trap "checkExitCode 1 '\nProgram Interrupted. Received SIGHUP signal'" SIGHUP 
-trap "checkExitCode 1 '\nProgram Interrupted. Received SIGINT signal'" SIGINT 
-trap "checkExitCode 1 '\nProgram Interrupted. Received SIGTERM signal'" SIGTERM 
+trap "checkExitCode 1 '\nProgram Interrupted. Received SIGHUP signal'" SIGHUP
+trap "checkExitCode 1 '\nProgram Interrupted. Received SIGINT signal'" SIGINT
+trap "checkExitCode 1 '\nProgram Interrupted. Received SIGTERM signal'" SIGTERM
 trap "checkExitCode 1 '\nProgram Interrupted. Received SIGKILL signal'" SIGKILL
 
 ### Default parameters
@@ -362,7 +363,7 @@ import ${InExt} ${input} ${TMP}${InbName}
 
 cd $TMP
 
-### Converting the Input image to a binary mask (if it is not already) 
+### Converting the Input image to a binary mask (if it is not already)
 echoV "\n----->	Converting the Input image to a binary mask (if it is not already) ...\n"
 echoV "\n--> 3dcalc \n
 	 -prefix ${TMP}${InbName}_mask.nii.gz \n
@@ -371,7 +372,7 @@ echoV "\n--> 3dcalc \n
 	 -verbose \n
 	 -nscale \n
 	 -byte;"
-	
+
 if [ "$verbose" == "1" ]
 then
 	3dcalc \
@@ -424,10 +425,10 @@ then
 	rmdir -v $TMP
 else
 	rm -f ${TMP}*
-	rmdir $TMP 
-fi	
+	rmdir $TMP
+fi
 
-### Execution Time 
+### Execution Time
 executionTime
 
 ################################################ END ################################################

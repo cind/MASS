@@ -1,4 +1,5 @@
 #!/bin/bash
+export FSLVERSION=6.0.0
 
 . @BASH_LIBRARY_DIR@/mass-functions.sh || { echo "Failed to source MASS functions!" 1>&2; exit 1; }
 
@@ -36,7 +37,7 @@ USAGE :	$0 [OPTIONS]
 OPTIONS:
 
 Reqd:	-in	   < path >	absolute path of the input file to be registered
-	
+
 Opt:	-dest	   < path >	absolute path to the destination where the results are to be stored (default: same as input)
 	-pref	   < pattern >	output file name (default: input_filled)
 	-tmp	   < path >	absolute path to the temporary directory
@@ -52,7 +53,7 @@ DEPENDENCIES:
 	3dBrickStat	: `which 3dBrickStat`
 	nifti1_test	: `which nifti1_test`
 	3dclust		: `which 3dclust`
-	
+
 HELP
 exit 1
 }
@@ -60,13 +61,13 @@ exit 1
 cleanUpandExit()
 {
 	echo -e ":o:o:o:o:o Aborting Operations .... \n\n"
-	
+
 	if [ -d "$TMP" ]
 	then
 		rm -rfv ${TMP}*
 	fi
-	
-	### Execution Time 
+
+	### Execution Time
 	executionTime
 
 	exit 1
@@ -76,41 +77,41 @@ parse()
 {
 	while [ -n "$1" ]; do
 		case $1 in
-			-h) 
+			-h)
 				help;
 				shift 1;;			# help is called
-		     	-in) 
+		     	-in)
 				input=$2;
-				
+
 				checkFile $input
 
-				temp=`FileAtt $input`				
+				temp=`FileAtt $input`
 				InExt=`echo $temp | awk '{ print $1 }'`
 				InbName=`echo $temp | awk '{ print $2 }'`
 				InDir=`echo $temp | awk '{ print $3 }'`
-				
+
 				input=${InDir}/${InbName}.${InExt}
 
 				shift 2;;			# SubID is set
-			-dest) 
+			-dest)
 				dest=`checkPath $2`;
 				shift 2;;			# source path is set
-			-tmp) 
+			-tmp)
 				tmpDirToUse=`checkPath $2`;
 				shift 2;;			# source path is set
-			-pref) 
+			-pref)
 				pref=$2;
 				shift 2;;			# source path is set
-			-v) 
+			-v)
 				verbose=1;
 				shift 1;;			# source path is set
-			-V) 
+			-V)
 				version;
 				shift 1;;			# source path is set
-			-*) 
+			-*)
 				echo "ERROR: no such option $1";
 				help;;
-			 *) 
+			 *)
 				break;;
 		esac
 	done
@@ -121,7 +122,7 @@ import()
 	ext=$1
 	inFile=$2
 	outFile=$3
-	
+
 	if [ "${ext}" == "nii.gz" ]
 	then
 		if [ "$verbose" == "1" ]
@@ -129,7 +130,7 @@ import()
 			cp -v ${inFile} ${outFile}.nii.gz
 		else
 			cp ${inFile} ${outFile}.nii.gz
-		fi			
+		fi
 	elif [ "${ext}" == "nii" ]
 	then
 		echoV "nifti1_test -zn1 ${inFile} ${outFile}"
@@ -142,7 +143,7 @@ import()
 	then
 		echoV "nifti1_test -zn1 ${inFile} ${outFile}"
 		nifti1_test -zn1 ${inFile} ${outFile}
-	fi	
+	fi
 }
 
 ################################################ END OF FUNCTIONS ################################################
@@ -158,9 +159,9 @@ startTime=`date +%F-%H:%M:%S`
 startTimeStamp=`date +%s`
 
 ### Specifying the trap signal
-trap "checkExitCode 1 '\nProgram Interrupted. Received SIGHUP signal'" SIGHUP 
-trap "checkExitCode 1 '\nProgram Interrupted. Received SIGINT signal'" SIGINT 
-trap "checkExitCode 1 '\nProgram Interrupted. Received SIGTERM signal'" SIGTERM 
+trap "checkExitCode 1 '\nProgram Interrupted. Received SIGHUP signal'" SIGHUP
+trap "checkExitCode 1 '\nProgram Interrupted. Received SIGINT signal'" SIGINT
+trap "checkExitCode 1 '\nProgram Interrupted. Received SIGTERM signal'" SIGTERM
 trap "checkExitCode 1 '\nProgram Interrupted. Received SIGKILL signal'" SIGKILL
 
 ### Reading the arguments
@@ -215,7 +216,7 @@ echoV "\n--> 3dcalc \n
 	 -verbose \n
 	 -nscale \n
 	 -byte;"
-	
+
 if [ "$verbose" == "1" ]
 then
 	3dcalc \
@@ -245,13 +246,13 @@ echoV "\n--> 3dclust \n
 	 -prefix ${TMP}${InbName}_inv_bg.nii.gz \n
 	 0 ${thresh} \n
 	 ${TMP}${InbName}_inv.nii.gz; "
-	
+
 if [ "$verbose" == "1" ]
 then
 	3dclust \
 	 -prefix ${TMP}${InbName}_inv_bg.nii.gz \
 	 0 ${thresh} \
-	 ${TMP}${InbName}_inv.nii.gz; 
+	 ${TMP}${InbName}_inv.nii.gz;
 else
 	3dclust \
 	 -prefix ${TMP}${InbName}_inv_bg.nii.gz \
@@ -270,7 +271,7 @@ echoV "\n--> 3dcalc \n
 	 -expr 'a+(b-c)' \n
 	 -verbose \n
 	 -nscale;"
-	
+
 if [ "$verbose" == "1" ]
 then
 	3dcalc \
@@ -280,7 +281,7 @@ then
 	 -c ${TMP}${InbName}_inv_bg.nii.gz \
 	 -expr 'a+(b-c)' \
 	 -verbose \
-	 -nscale; 
+	 -nscale;
 else
 	3dcalc \
 	 -prefix ${TMP}${pref}.nii.gz \
@@ -327,8 +328,8 @@ else
 	rm -f ${TMP}${InbName}_inv.nii.gz
 	rm -f ${TMP}${InbName}_inv_bg.nii.gz
 	rm -f FillHoles.log
-	rmdir $TMP 
-fi	
+	rmdir $TMP
+fi
 
 ### Execution Time
 executionTime

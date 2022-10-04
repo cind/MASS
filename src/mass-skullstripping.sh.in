@@ -1,4 +1,5 @@
 #!/bin/bash
+export FSLVERSION=6.0.
 
 . @BASH_LIBRARY_DIR@/mass-functions.sh || { echo "Failed to source MASS functions!" 1>&2; exit 1; }
 
@@ -30,7 +31,7 @@ cat <<HELP
 This script does the following:
 
 	This script does the post-processing for the Multi-Atlas Skull Stripping algorithm by
-	combining the different brain masks generated from multiple registrations using the 
+	combining the different brain masks generated from multiple registrations using the
 	jacobian determinants of the deformations as weights.
 
 ##############################################
@@ -39,11 +40,11 @@ OPTIONS:
 
 Reqd:	-in	   < path >	absolute path of the input file to be registered
 	-dest	   < path >	absolute path to the destination where the results are to be stored
-	
+
 Opt:	-mask      < pattern >	Prefix of the output brain mask (default: input_brainmask)
 				Provide the filename without the extension or the path
 	-cbq	   < pattern >	Prefix of the output skull-stripped image (default: input_brain)
-	-agg	   < int >	aggresiveness of the skull-stripping and cerebellum removal. 
+	-agg	   < int >	aggresiveness of the skull-stripping and cerebellum removal.
 				0 < \$agg < 100 (default: 50)
 	-regs	   < int >	No. of templates to be used for registrations (default: 6)
 	-int	   < int >	keep intermediate files (default: 0-delete)
@@ -65,7 +66,7 @@ DEPENDENCIES:
 	3dBrickStat	: `which 3dBrickStat`
 	nifti1_test	: `which nifti1_test`
 	3dclust		: `which 3dclust`
-	
+
 	fslmerge	: `which fslmerge`
 	fslsplit	: `which fslsplit`
 
@@ -76,7 +77,7 @@ exit 1
 cleanUpandExit()
 {
 	echo -e ":o:o:o:o:o Aborting Operations .... \n\n"
-	
+
 	if [ -d "$TMP" ]  # && [ "$int" == "0" ] # to debug
 	then
 		if [ "$TMP" != "$dest" ]
@@ -88,11 +89,11 @@ cleanUpandExit()
 				rmV Template${i}${float}
 				rmV Template${i}${smoothed}
 				rmV Template${i}${MaskJRank}
-	
+
 				rmV Template${i}${abs}
 				rmV Template${i}${JRanked}
 			done
-	
+
 			rmV ${AllJac}
 			rmV ${AllJacRanked}
 
@@ -104,14 +105,14 @@ cleanUpandExit()
 			rmV ${Sum_open}
 			rmV ${Sum_filled}
 			rmV ${Sum_clustered}
-		
+
 			rmV ${InbName}.nii.gz
-			rmV ${TMP}Debug.log	
+			rmV ${TMP}Debug.log
 		fi
 	fi
-	
+
 	executionTime
-		
+
 	exit 1
 }
 
@@ -119,61 +120,61 @@ parse()
 {
 	while [ -n "$1" ]; do
 		case $1 in
-			-h) 
+			-h)
 				help;
 				shift 1;;			# help is called
-		     	-in) 
+		     	-in)
 				input=$2;
-				
+
 				checkFile $input
-				temp=`FileAtt $input`				
+				temp=`FileAtt $input`
 				InExt=`echo $temp | awk '{ print $1 }'`
 				InbName=`echo $temp | awk '{ print $2 }'`
 				InDir=`echo $temp | awk '{ print $3 }'`
-				
+
 				input=${InDir}/${InbName}.${InExt}
 
 				shift 2;;			# SubID is set
-			-dest) 
+			-dest)
 				dest=`checkPath $2`;
 				shift 2;;			# source path is set
-			-tmp) 
+			-tmp)
 				tmpDirToUse=`checkPath $2`;
 				shift 2;;			# source path is set
-			-regs) 
+			-regs)
 				regs=$2;
 				shift 2;;			# source path is set
-			-agg) 
+			-agg)
 				agg=$2;
 				shift 2;;			# source path is set
-			-smooth) 
+			-smooth)
 				smooth=$2;
 				shift 2;;			# source path is set
-			-int) 
+			-int)
 				int=$2;
 				shift 2;;			# source path is set
-			-jacRank) 
+			-jacRank)
 				jacRank=$2;
 				shift 2;;			# source path is set
-			-kernel) 
+			-kernel)
 				kernel=$2;
 				shift 2;;			# source path is set
-			-v) 
+			-v)
 				verbose=$2;
 				shift 2;;			# source path is set
-			-V) 
+			-V)
 				version;
 				shift 1;;			# source path is set
-			-mask) 
+			-mask)
 				mask=$2;
 				shift 2;;			# source path is set
-			-cbq) 
+			-cbq)
 				cbq=$2;
 				shift 2;;			# source path is set
-			-*) 
+			-*)
 				echo "ERROR: no such option $1";
 				help;;
-			 *) 
+			 *)
 				break;;
 		esac
 	done
@@ -184,7 +185,7 @@ import()
 	ext=$1
 	inFile=$2
 	outFile=$3
-	
+
 	if [ ! -f ${outFile}.nii.gz ]
 	then
 		if [ "${ext}" == "nii.gz" ] || [ "${ext}" == "nii" ] || [ "${ext}" == "img" ]
@@ -195,7 +196,7 @@ import()
 		then
 			echoV "nifti1_test -zn1 ${inFile%.hdr}.img ${outFile}"
 			nifti1_test -zn1 ${inFile%.hdr}.img ${outFile}
-		fi	
+		fi
 	fi
 }
 
@@ -225,9 +226,9 @@ verbose=0
 kernel=2
 
 ### Specifying the trap signal
-trap "checkExitCode 1 '\nProgram Interrupted. Received SIGHUP signal'" SIGHUP 
-trap "checkExitCode 1 '\nProgram Interrupted. Received SIGINT signal'" SIGINT 
-trap "checkExitCode 1 '\nProgram Interrupted. Received SIGTERM signal'" SIGTERM 
+trap "checkExitCode 1 '\nProgram Interrupted. Received SIGHUP signal'" SIGHUP
+trap "checkExitCode 1 '\nProgram Interrupted. Received SIGINT signal'" SIGINT
+trap "checkExitCode 1 '\nProgram Interrupted. Received SIGTERM signal'" SIGTERM
 trap "checkExitCode 1 '\nProgram Interrupted. Received SIGKILL signal'" SIGKILL
 
 ### Reading the arguments
@@ -330,7 +331,7 @@ do
 		import nii.gz ${dest}${InbName}-Template${i}${InSpace} ${TMP}${InbName}-Template${i}${InSpace%.nii.gz}
 		import nii.gz ${dest}${InbName}-Template${i}${Jacobian} ${TMP}${InbName}-Template${i}${Jacobian%.nii.gz}
 		import nii.gz ${dest}${InbName}-Template${i}${TemplateSpace} ${TMP}${InbName}-Template${i}${TemplateSpace%.nii.gz}
-							
+
 		if [ -z "$importlist" ]
 		then
 			importlist=$i
@@ -350,21 +351,21 @@ for i in $importlist
 do
 	TempVol=`3dBrickStat -non-zero -slow -volume ${TMP}${InbName}-Template${i}${TemplateSpace}`
 	SubjVol=`3dBrickStat -non-zero -slow -volume ${TMP}${InbName}-Template${i}${InSpace}`
-	
+
 	Ratio=`echo "scale=7; $SubjVol / $TempVol" | bc`
-	
-	
+
+
 	### This is added because 3dBrickStat gives a negative volume for an image with LAS orientation??!!
 	zero=0
 	if [ `echo "$Ratio < $zero" | bc` -eq 1 ]
 	then
 		Ratio=`echo "scale=7; -1 * $Ratio" | bc`
 	fi
-	
+
 	lowerLimit=0.05
 	upperLimit=20
-	
-	
+
+
 	if [  `echo "$Ratio > $lowerLimit" | bc` -eq 1 ] && [ `echo "$Ratio < $upperLimit" | bc` -eq 1 ]
 	then
 		if [ -z "$list" ]
@@ -376,7 +377,7 @@ do
 	else
 		echoV "CAUTION: Excluding Template${i} as the registration is not accurate enough to be included! Head size ratio after and before registration is $Ratio" 1
 	fi
-done		
+done
 
 ### Converting the Reference masks to float datatype
 echoV "----->	Converting the Reference masks to float datatype ..." 1
@@ -389,7 +390,7 @@ do
 	 -float \n
 	 -nscale \n
 	 -verbose;"
-	
+
 	if [ "$verbose" == "1" ]
 	then
 		3dcalc \
@@ -406,7 +407,7 @@ do
 		 -expr 'a' \
 		 -float \
 		 -nscale \
-		 -verbose > ${TMP}Debug.log 2>&1;	
+		 -verbose > ${TMP}Debug.log 2>&1;
 	fi
 	checkExitCode $? "\nERROR: Conversion to Float for Template${i} failed!!!"
 done
@@ -422,13 +423,13 @@ then
 		 -datum float \n
 		 -prefix ${TMP}${InbName}-Template${i}${smoothed} \n
 		 ${TMP}${InbName}-Template${i}${float};"
-	
+
 		3dmerge \
 		 -1blur_fwhm ${smooth} \
 		 -datum float \
 		 -prefix ${TMP}${InbName}-Template${i}${smoothed} \
 		 ${TMP}${InbName}-Template${i}${float} > ${TMP}Debug.log 2>&1;
-	
+
 		checkExitCode $? "\nERROR: Smoothing for Template${i} failed!!!"
 	done
 else
@@ -452,7 +453,7 @@ do
 	 -expr 'abs(log10(a*(1-isnegative(a))+0.01*${posmin% }*isnegative(a)))' \n
 	 -nscale \n
 	 -float;"
-	
+
 	if [ "$verbose" == "1" ]
 	then
 		3dcalc \
@@ -469,7 +470,7 @@ do
 		 -a ${TMP}${InbName}-Template${i}${Jacobian} \
 		 -expr "abs(log10(a*(1-isnegative(a))+0.01*${posmin% }*isnegative(a)))" \
 		 -nscale \
-		 -float > ${TMP}Debug.log 2>&1;	
+		 -float > ${TMP}Debug.log 2>&1;
 	fi
 
 	checkExitCode $? "\nERROR: Calculation of logarithm and absolute values for Template${i} failed!!!"
@@ -522,23 +523,23 @@ do
 	if [ $i -lt 10 ]
 	then
 		if [ "$verbose" == "1" ]
-		then	
+		then
 			mv -v vol000${i}.nii.gz ${TMP}${InbName}-Template${j}${JRanked}
 		else
 			mv vol000${i}.nii.gz ${TMP}${InbName}-Template${j}${JRanked}
 		fi
-	
+
 		i=`echo "scale=0; $i + 1" | bc`
 	else
 		if [ "$verbose" == "1" ]
-		then	
+		then
 			mv -v vol00${i}.nii.gz ${TMP}${InbName}-Template${j}${JRanked}
 		else
 			mv vol00${i}.nii.gz ${TMP}${InbName}-Template${j}${JRanked}
 		fi
-	
+
 		i=`echo "scale=0; $i + 1" | bc`
-	fi	
+	fi
 done
 
 ### Multiplying the smoothed, reference masks with the Jacobian ranks
@@ -553,9 +554,9 @@ do
 	 -nscale \n
 	 -float\n
 	 -verbose;"
-	
+
 	if [ "$verbose" == "1" ]
-	then	
+	then
 		3dcalc \
 		 -prefix ${TMP}${InbName}-Template${i}${MaskJRank} \
 		 -a ${TMP}${InbName}-Template${i}${smoothed} \
@@ -572,9 +573,9 @@ do
 		 -expr 'a*b' \
 		 -nscale \
 		 -float \
-		 -verbose > ${TMP}Debug.log 2>&1;	
+		 -verbose > ${TMP}Debug.log 2>&1;
 	fi
-	
+
 	checkExitCode $? "\nERROR: Multiplication of smoothed, reference masks with Jacobian ranks for Template${i} failed!!!"
 done
 
@@ -687,7 +688,7 @@ echoV "\n--> ${fillholes} \n
 	 -in ${Sum_open} \n
 	 -dest $TMP \n
 	 -v;"
-	
+
 if [ "$verbose" == "1" ]
 then
 	${fillholes} \
@@ -752,8 +753,8 @@ then
 	 -nscale \
 	 -byte;
 
-	checkExitCode $? "\nERROR: Conversion to byte failed!!!"	
-	
+	checkExitCode $? "\nERROR: Conversion to byte failed!!!"
+
 	mv -v ${Sum_JRanked} ${jacMask}
 else
 	3dcalc \
@@ -762,9 +763,9 @@ else
 	 -expr a \
 	 -nscale \
 	 -byte > ${TMP}Debug.log 2>&1;
-	
+
 	checkExitCode $? "\nERROR: Conversion to byte failed!!!"
-	
+
 	mv ${Sum_JRanked} ${jacMask}
 fi
 
@@ -810,17 +811,17 @@ done
 rmV ${TMP}${InbName}.nii.gz
 
 if [ "$int" == 0 ] || [ "$int" == 1 ]
-then	
+then
 	for i in $list
 	do
 		rmV ${TMP}${InbName}-Template${i}${float}
 		rmV ${TMP}${InbName}-Template${i}${smoothed}
 		rmV ${TMP}${InbName}-Template${i}${MaskJRank}
-	
+
 		rmV ${TMP}${InbName}-Template${i}${abs}
 		rmV ${TMP}${InbName}-Template${i}${JRanked}
 	done
-	
+
 	rmV ${AllJac}
 	rmV ${AllJacRanked}
 

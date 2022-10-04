@@ -1,4 +1,5 @@
 #!/bin/bash
+export FSLVERSION=6.0.0
 
 . @BASH_LIBRARY_DIR@/mass-functions.sh || { echo "Failed to source MASS functions!" 1>&2; exit 1; }
 
@@ -29,7 +30,7 @@ cat <<HELP
 
 This script does the following:
 
-	It non-linearly registers (using dramms) the template image to an input image 
+	It non-linearly registers (using dramms) the template image to an input image
 	and creates the jacobian determinant of the deformation
 
 ##############################################
@@ -39,7 +40,7 @@ OPTIONS:
 Reqd:	-in	< file >	absolute path to the input file to be registered
 	-ref	< file >	absolute path to the reference file to be used for registration
 	-str	< file >	absolute path to the reference, skull-stripped file to be used for registration
-	 
+
 Opt:	-h         		this help page
 	-dest	< path >	absolute path to the destination where the results are to be stored (default: same as input)
 	-int	< int >		keep intermediate files (default: 0 - delete)
@@ -62,12 +63,12 @@ exit 1
 cleanUpandExit()
 {
 	echo -e ":o:o:o:o:o Aborting Operations .... \n\n"
-	
+
 	if [ -d "$TMP" ]
 	then
 		rm -rfv ${TMP}
 	fi
-	
+
 	executionTime
 	exit 1
 }
@@ -76,67 +77,67 @@ parse()
 {
 	while [ -n "$1" ]; do
 		case $1 in
-			-h) 
+			-h)
 				help;
 				shift 1;;			# help is called
-		     	-in) 
+		     	-in)
 				input=$2;
-				
+
 				checkFile $input
-				temp=`FileAtt $input`				
+				temp=`FileAtt $input`
 				InExt=`echo $temp | awk '{ print $1 }'`
 				InbName=`echo $temp | awk '{ print $2 }'`
 				InDir=`echo $temp | awk '{ print $3 }'`
-				
+
 				input=${InDir}/${InbName}.${InExt}
-				
+
 				shift 2;;			# SubID is set
-			-ref) 
+			-ref)
 				ref=$2;
-				
+
 				checkFile $ref
-				temp=`FileAtt $ref`				
+				temp=`FileAtt $ref`
 				RefExt=`echo $temp | awk '{ print $1 }'`
 				RefbName=`echo $temp | awk '{ print $2 }'`
 				RefDir=`echo $temp | awk '{ print $3 }'`
-				
+
 				ref=${RefDir}/${RefbName}.${RefExt}
 
 				shift 2;;			# source path is set
-			-str) 
+			-str)
 				str=$2;
-				
+
 				checkFile $str
-				temp=`FileAtt $str`				
+				temp=`FileAtt $str`
 				StrExt=`echo $temp | awk '{ print $1 }'`
 				StrbName=`echo $temp | awk '{ print $2 }'`
 				StrDir=`echo $temp | awk '{ print $3 }'`
-				
+
 				str=${StrDir}/${StrbName}.${StrExt}
 
 				shift 2;;			# source path is set
-			-dest) 
+			-dest)
 				dest=`checkPath $2`;
 				shift 2;;			# source path is set
-			-tmp) 
+			-tmp)
 				tmpDirToUse=`checkPath $2`;
 				shift 2;;			# source path is set
-			-int) 
+			-int)
 				int=$2;
 				shift 2;;			# source path is set
-			-reg) 
+			-reg)
 				reg=$2;
 				shift 2;;			# source path is set
-			-v) 
+			-v)
 				verbose=$2;
 				shift 2;;			# source path is set
-			-V) 
+			-V)
 				version;
 				shift 1;;			# source path is set
-			-*) 
+			-*)
 				echo "ERROR: no such option $1";
 				help;;
-			 *) 
+			 *)
 				break;;
 		esac
 	done
@@ -147,7 +148,7 @@ import()
 	ext=$1
 	inFile=$2
 	outFile=$3
-	
+
 	if [ "${ext}" == "nii.gz" ]
 	then
 		echoV "nifti1_test -n2 ${inFile} ${outFile}"
@@ -164,7 +165,7 @@ import()
 	then
 		echoV "nifti1_test -n2 ${inFile} ${outFile}"
 		nifti1_test -n2 ${inFile} ${outFile}
-	fi	
+	fi
 }
 
 ################################################ END OF FUNCTIONS ################################################
@@ -192,9 +193,9 @@ FSLOUTPUTTYPE=NIFTI_GZ; export $FSLOUTPUTTYPE
 
 
 ### Specifying the trap signal
-trap "checkExitCode 1 '\nProgram Interrupted. Received SIGHUP signal'" SIGHUP 
-trap "checkExitCode 1 '\nProgram Interrupted. Received SIGINT signal'" SIGINT 
-trap "checkExitCode 1 '\nProgram Interrupted. Received SIGTERM signal'" SIGTERM 
+trap "checkExitCode 1 '\nProgram Interrupted. Received SIGHUP signal'" SIGHUP
+trap "checkExitCode 1 '\nProgram Interrupted. Received SIGINT signal'" SIGINT
+trap "checkExitCode 1 '\nProgram Interrupted. Received SIGTERM signal'" SIGTERM
 trap "checkExitCode 1 '\nProgram Interrupted. Received SIGKILL signal'" SIGKILL
 
 ### Reading the arguments
@@ -329,15 +330,15 @@ checkExitCode $? "\nERROR: Deformable Registration failed!!!"
 if [ "$int" == 0 ] || [ "$int" == 1 ]
 then
 	echoV "----->	Removing temporary files ..." 1
-	rmV ${TMPref} 
+	rmV ${TMPref}
 	rmV ${TMPref%.hdr}.img
-	rmV ${TMPstr} 
+	rmV ${TMPstr}
 	rmV ${TMPstr%.hdr}.img
-	rmV ${TMPrefres} 
+	rmV ${TMPrefres}
 	rmV ${TMPrefres%.hdr}.img
-	rmV ${TMPstrres} 
+	rmV ${TMPstrres}
 	rmV ${TMPstrres%.hdr}.img
-	rmV ${TMPin} 
+	rmV ${TMPin}
 	rmV ${TMPin%.hdr}.img
 
 	rmV ${FieldCoeff}
@@ -383,7 +384,7 @@ else
 	rmdir $TMP
 fi
 
-### Execution Time 
+### Execution Time
 executionTime
 
 ################################################ END ################################################
