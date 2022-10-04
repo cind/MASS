@@ -69,6 +69,12 @@ If you have a different queuing software and you select the "MISC" option, you n
 **src/schedulerSettings/SettingsMISC.sh** file within the package with the appropriate options and arguments that are specific
 to your queuing system. You can refer to the corresponding files for SGE and PBS as examples.
 
+This repository requries that you have `git lfs` installed and initiated in order to
+get the Template NiFTI files.
+
+**Install `git lfs` and run `git lfs install` BEFORE cloning.**
+
+
 Configure
 ---------
 
