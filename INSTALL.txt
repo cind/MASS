@@ -96,15 +96,11 @@ Configure
 
   $  cmake -D CMAKE_INSTALL_PREFIX:STRING=/Full/path/to/install/mass  -D SCHEDULER:STRING=SGE ..
 
-   OR:
+You can set the Python virtual environment to something other than production.
 
-  $  ccmake ../mass-1.1.0-source
-
-   - Press "c" to configure the build system and "e" to ignore warnings.
-   - Set "SCHEDULER" variable with your job scheduler information.
-   - Set "CMAKE_INSTALL_PREFIX" and other CMake variables and options.
-   - Continue pressing "c" until the option "g" is available.
-   - Then press "g" to generate the GNU Make configuration files.
+  $ cmake -D CMAKE_INSTALL_PREFIX:STRING=/m/Dev/pijp-multiatlas/mass_test_build \
+          -D SCHEDULER:STRING=SGE \
+          -D VENV:STRING=/m/Dev/pijp-multiatlas/venv ..
 
 
 Build
