@@ -1,3 +1,4 @@
+#!@VENV@/bin/python
 #
 # @file  choosetemplate.m
 # @brief Apply k-means clustering to a set of images and returns the centroids of clusters
@@ -10,7 +11,7 @@
 
 
 
-#Usage 
+#Usage
 # ############################################ #
 # choosetemplate.py 5 /Path/To/Input/List.txt /Path/To/Destination/
 ################################################
@@ -68,7 +69,7 @@ for line in lines:
 	else:
 		c=np.vstack((c,b))
 		print(c.shape)
-  
+
 
 ### Run KMeans
 # km = KMeans(n_clusters=int(NumClust), init='random', max_iter=100, n_init=100,verbose=0,n_jobs=int(MT))
@@ -92,11 +93,11 @@ for y in range(km.n_clusters):
 			if c_dist!=pre_c_dist:
 				center=lines[ctr]
 				cluster_list.append(lines[ctr])
-	print(cluster_list)     
+	print(cluster_list)
 	cx=open(DestDir+"list"+str(y)+".txt","w")
 	for im in cluster_list:
 		cx.write(im)
-	cx.close() 
+	cx.close()
 	center_list.append(center)
 
 print('\n')
