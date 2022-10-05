@@ -52,6 +52,12 @@ install( FILES ${CMAKE_BINARY_DIR}/src/mass-chooseTemplates.sh.in
 	DESTINATION bin
 	RENAME mass-chooseTemplates )
 
+configure_file( mass-choosetemplate.py.in ${CMAKE_BINARY_DIR}/src/mass-choosetemplate.py.in @ONLY )
+install( FILES ${CMAKE_BINARY_DIR}/src/mass-choosetemplate.py.in
+	PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
+	DESTINATION lib
+	RENAME mass-choosetemplate.py )
+
 #basis_add_executable (mass-thresholdJacobian.sh NO_BASIS_UTILITIES)
 configure_file( mass-thresholdJacobian.sh.in ${CMAKE_BINARY_DIR}/src/mass-thresholdJacobian.sh.in @ONLY )
 install( FILES ${CMAKE_BINARY_DIR}/src/mass-thresholdJacobian.sh.in
