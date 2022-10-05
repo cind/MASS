@@ -2,6 +2,7 @@
 
 . @BASH_LIBRARY_DIR@/mass-functions.sh || { echo "Failed to source MASS functions!" 1>&2; exit 1; }
 export FSLVERSION=6.0.0
+export ANTSVERSION=ants-2017-12-07
 
 ################################################ VERSION INFO ################################################
 # $Id: ChooseTemplates.sh 170 2013-09-20 14:44:15Z hsiehm@UPHS.PENNHEALTH.PRV $
@@ -463,19 +464,18 @@ fi
 ### Clusterizing Input files, finally
 echoV "\n----->	Clustering the Input files ...\n"
 
-echoV "\n-->  python \n
+echoV "\n-->
 	 ${scripts}mass-choosetemplate \n
 	 ${clust} \n
 	 ${TMP}TempAdjList.txt \n
 	 ${TMP} > ${TMP}choosetemplate.log \n
 	 $MT;"
 
-python \
- ${scripts}mass-choosetemplate \
- ${clust} \
- ${TMP}TempAdjList.txt \
- ${TMP} \
- ${MT} > ${TMP}choosetemplate.log 2>&1 || { checkExitCode 1 "\nERROR: Execution of choosetemplate failed!!!"; }
+${scripts}mass-choosetemplate \
+    ${clust} \
+    ${TMP}TempAdjList.txt \
+    ${TMP} \
+    ${MT} > ${TMP}choosetemplate.log 2>&1 || { checkExitCode 1 "\nERROR: Execution of choosetemplate failed!!!"; }
 
 ### Write an output list with the templates and their original basenames and extensions
 if [ ! -d $dest ]
