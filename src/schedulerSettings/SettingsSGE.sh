@@ -11,7 +11,7 @@ setSubmitCMD()
 	# This is done so that the user can adapt these options to match them with his own scheduler
 	_OptExec="qsub"							# Executable name for job scheduler
 	_OptPriority="-p"						# Option for setting priority
-	_OptMemory="-l h_vmem=${_memory}G"				# String for requesting memory
+	_OptMemory="-l h_vmem=${_memory}G,mem_free=${_memory}G"	# String for requesting memory
 	_OptTerse="-terse"						# Option for requesting output of a job id only
 	_OptJoin="-j y"							# String for joining the output files
 	_OptOutput="-o ${log}\$JOB_NAME-\$JOB_ID.log"			# String for specifying output filename
