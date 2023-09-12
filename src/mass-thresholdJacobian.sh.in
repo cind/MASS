@@ -1,6 +1,11 @@
 #!/bin/bash
 
 . @BASH_LIBRARY_DIR@/mass-functions.sh || { echo "Failed to source MASS functions!" 1>&2; exit 1; }
+<<<<<<< Updated upstream
+=======
+export FSLVERSION=6.0.0
+export AFNIVERSION=AFNI_23.2.08
+>>>>>>> Stashed changes
 
 ################################################ VERSION INFO ################################################
 # $Id: ThresholdJacobian.sh 170 2013-09-20 14:44:15Z hsiehm@UPHS.PENNHEALTH.PRV $
