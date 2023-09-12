@@ -3,6 +3,11 @@
 . @BASH_LIBRARY_DIR@/mass-functions.sh || { echo "Failed to source MASS functions!" 1>&2; exit 1; }
 ## try to source the scheduler setting file. if scheduler is not defined, @SCHEDULER_SETTING_FILE@ would be undefined, the sourcing would fail and isSchedulerAvailable would be undefined.
 . @BASH_LIBRARY_DIR@/@SCHEDULER_SETTING_FILE@ 2>/dev/null && { isSchedulerAvailable=1; }
+<<<<<<< Updated upstream
+=======
+export FSLVERSION=6.0.0
+export AFNIVERSION=AFNI_23.2.08
+>>>>>>> Stashed changes
 
 ################################################ VERSION INFO ################################################
 # $Id: mass.sh 163 2013-09-06 01:42:07Z hsiehm@UPHS.PENNHEALTH.PRV $
