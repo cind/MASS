@@ -4,7 +4,6 @@
 ## try to source the scheduler setting file. if scheduler is not defined, @SCHEDULER_SETTING_FILE@ would be undefined, the sourcing would fail and isSchedulerAvailable would be undefined.
 . @BASH_LIBRARY_DIR@/@SCHEDULER_SETTING_FILE@ 2>/dev/null && { isSchedulerAvailable=1; }
 export FSLVERSION=6.0.0
-export AFNIVERSION=AFNI_19.1.15
 
 ############################################### #VERSION INFO ################################################
 # $Id: mass.sh 163 2013-09-06 01:42:07Z hsiehm@UPHS.PENNHEALTH.PRV $

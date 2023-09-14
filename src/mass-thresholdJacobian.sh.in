@@ -2,7 +2,6 @@
 
 . @BASH_LIBRARY_DIR@/mass-functions.sh || { echo "Failed to source MASS functions!" 1>&2; exit 1; }
 export FSLVERSION=6.0.0
-export AFNIVERSION=AFNI_19.1.15
 
 ################################################ VERSION INFO ################################################
 # $Id: ThresholdJacobian.sh 170 2013-09-20 14:44:15Z hsiehm@UPHS.PENNHEALTH.PRV $
